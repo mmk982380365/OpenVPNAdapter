@@ -142,7 +142,7 @@ static size_t BMK_findMaxMem(U64 requiredMem)
     while (!testmem) {
         if (requiredMem > step) requiredMem -= step;
         else requiredMem >>= 1;
-        testmem = (BYTE*) malloc ((size_t)requiredMem);
+        testmem = (BYTE*) calloc(1, (size_t)requiredMem);
     }
     free (testmem);
 
@@ -382,12 +382,12 @@ int fullSpeedBench(const char** fileNamesTable, int nbFiles)
           DISPLAY("Not enough memory for '%s' full size; testing %i MB only...\n", inFileName, (int)(benchedSize>>20));
 
       /* Allocation */
-      chunkP = (struct chunkParameters*) malloc(((benchedSize / (size_t)g_chunkSize)+1) * sizeof(struct chunkParameters));
-      orig_buff = (char*) malloc(benchedSize);
+      chunkP = (struct chunkParameters*) calloc(1, ((benchedSize / (size_t)g_chunkSize)+1) * sizeof(struct chunkParameters));
+      orig_buff = (char*) calloc(1, benchedSize);
       nbChunks = (int) ((benchedSize + (g_chunkSize-1)) / g_chunkSize);
       maxCompressedChunkSize = LZ4_compressBound(g_chunkSize);
       compressedBuffSize = nbChunks * maxCompressedChunkSize;
-      compressed_buff = (char*)malloc((size_t)compressedBuffSize);
+      compressed_buff = (char*)calloc(1, (size_t)compressedBuffSize);
       if(!chunkP || !orig_buff || !compressed_buff) {
           DISPLAY("\nError: not enough memory!\n");
           fclose(inFile);

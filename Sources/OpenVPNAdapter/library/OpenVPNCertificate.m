@@ -72,7 +72,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _crt = malloc(sizeof(mbedtls_x509_crt));
+        _crt = calloc(1, sizeof(mbedtls_x509_crt));
         mbedtls_x509_crt_init(_crt);
     }
     return self;
@@ -83,7 +83,7 @@
     NSString *footer = @"-----END CERTIFICATE-----\n";
     
     size_t buffer_length = self.crt->raw.len * 10;
-    unsigned char *pem_buffer = malloc(buffer_length);
+    unsigned char *pem_buffer = calloc(1, buffer_length);
     
     size_t output_length = 0;
     

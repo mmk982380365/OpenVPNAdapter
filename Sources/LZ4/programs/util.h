@@ -395,7 +395,7 @@ UTIL_STATIC int UTIL_prepareFileList(const char *dirName, char** bufStart, size_
     HANDLE hFile;
 
     dirLength = (int)strlen(dirName);
-    path = (char*) malloc(dirLength + 3);
+    path = (char*) calloc(1, dirLength + 3);
     if (!path) return 0;
 
     memcpy(path, dirName, dirLength);
@@ -412,7 +412,7 @@ UTIL_STATIC int UTIL_prepareFileList(const char *dirName, char** bufStart, size_
 
     do {
         fnameLength = (int)strlen(cFile.cFileName);
-        path = (char*) malloc(dirLength + fnameLength + 2);
+        path = (char*) calloc(1, dirLength + fnameLength + 2);
         if (!path) { FindClose(hFile); return 0; }
         memcpy(path, dirName, dirLength);
         path[dirLength] = '\\';
@@ -469,7 +469,7 @@ UTIL_STATIC int UTIL_prepareFileList(const char *dirName, char** bufStart, size_
         if (strcmp (entry->d_name, "..") == 0 ||
             strcmp (entry->d_name, ".") == 0) continue;
         fnameLength = (int)strlen(entry->d_name);
-        path = (char*) malloc(dirLength + fnameLength + 2);
+        path = (char*) calloc(1, dirLength + fnameLength + 2);
         if (!path) { closedir(dir); return 0; }
         memcpy(path, dirName, dirLength);
         path[dirLength] = '/';
@@ -527,7 +527,7 @@ UTIL_STATIC const char** UTIL_createFileList(const char **inputNames, unsigned i
 {
     size_t pos;
     unsigned i, nbFiles;
-    char* buf = (char*)malloc(LIST_SIZE_INCREASE);
+    char* buf = (char*)calloc(1, LIST_SIZE_INCREASE);
     char* bufend = buf + LIST_SIZE_INCREASE;
     const char** fileTable;
 
@@ -554,7 +554,7 @@ UTIL_STATIC const char** UTIL_createFileList(const char **inputNames, unsigned i
 
     if (nbFiles == 0) { free(buf); return NULL; }
 
-    fileTable = (const char**)malloc((nbFiles+1) * sizeof(const char*));
+    fileTable = (const char**)calloc(1, (nbFiles+1) * sizeof(const char*));
     if (!fileTable) { free(buf); return NULL; }
 
     for (i=0, pos=0; i<nbFiles; i++) {

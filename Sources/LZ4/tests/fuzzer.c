@@ -183,8 +183,8 @@ static int FUZ_AddressOverflow(void)
         return 0;
     }
 
-    buffers[0] = (char*)malloc(BLOCKSIZE_I134);
-    buffers[1] = (char*)malloc(BLOCKSIZE_I134);
+    buffers[0] = (char*)calloc(1, BLOCKSIZE_I134);
+    buffers[1] = (char*)calloc(1, BLOCKSIZE_I134);
     if ((!buffers[0]) || (!buffers[1])) {
         free(buffers[0]); free(buffers[1]);
         DISPLAY("not enough memory for tests \n");
@@ -193,7 +193,7 @@ static int FUZ_AddressOverflow(void)
 
     for (nbBuff=2; nbBuff < MAX_NB_BUFF_I134; nbBuff++) {
         DISPLAY("%3i \b\b\b\b", nbBuff); fflush(stdout);
-        buffers[nbBuff] = (char*)malloc(BLOCKSIZE_I134);
+        buffers[nbBuff] = (char*)calloc(1, BLOCKSIZE_I134);
         if (buffers[nbBuff]==NULL) goto _endOfTests;
 
         if (((uintptr_t)buffers[nbBuff] > (uintptr_t)0x80000000) && (!highAddress)) {
@@ -273,7 +273,7 @@ static void FUZ_freeLowAddr(void* buffer, size_t size)
 
 static void* FUZ_createLowAddr(size_t size)
 {
-    return malloc(size);
+    return calloc(1, size);
 }
 
 static void FUZ_freeLowAddr(void* buffer, size_t size)
@@ -307,14 +307,14 @@ static int FUZ_test(U32 seed, U32 nbCycles, const U32 startCycle, const double c
     unsigned long long cbytes = 0;
     unsigned long long hcbytes = 0;
     unsigned long long ccbytes = 0;
-    void* const CNBuffer = malloc(COMPRESSIBLE_NOISE_LENGTH);
+    void* const CNBuffer = calloc(1, COMPRESSIBLE_NOISE_LENGTH);
     size_t const compressedBufferSize = LZ4_compressBound(FUZ_MAX_BLOCK_SIZE);
-    char* const compressedBuffer = (char*)malloc(compressedBufferSize);
-    char* const decodedBuffer = (char*)malloc(FUZ_MAX_DICT_SIZE + FUZ_MAX_BLOCK_SIZE);
+    char* const compressedBuffer = (char*)calloc(1, compressedBufferSize);
+    char* const decodedBuffer = (char*)calloc(1, FUZ_MAX_DICT_SIZE + FUZ_MAX_BLOCK_SIZE);
     size_t const labSize = 96 KB;
     void* const lowAddrBuffer = FUZ_createLowAddr(labSize);
-    void* const stateLZ4   = malloc(LZ4_sizeofState());
-    void* const stateLZ4HC = malloc(LZ4_sizeofStateHC());
+    void* const stateLZ4   = calloc(1, LZ4_sizeofState());
+    void* const stateLZ4HC = calloc(1, LZ4_sizeofStateHC());
     LZ4_stream_t LZ4dict;
     LZ4_streamHC_t LZ4dictHC;
     U32 coreRandState = seed;

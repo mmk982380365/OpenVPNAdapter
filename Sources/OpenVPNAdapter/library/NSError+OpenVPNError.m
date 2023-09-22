@@ -200,7 +200,7 @@
 
 + (NSError *)ovpn_errorObjectForMbedTLSError:(NSInteger)errorCode description:(NSString *)description {
     size_t length = 1024;
-    char *buffer = malloc(length);
+    char *buffer = calloc(1, length);
     
     mbedtls_strerror(errorCode, buffer, length);
     

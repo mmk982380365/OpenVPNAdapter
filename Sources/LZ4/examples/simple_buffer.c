@@ -45,7 +45,7 @@ int main(void) {
   // LZ4 provides a function that will tell you the maximum size of compressed output based on input data via LZ4_compressBound().
   const int max_dst_size = LZ4_compressBound(src_size);
   // We will use that size for our destination boundary when allocating space.
-  char* compressed_data = malloc(max_dst_size);
+  char* compressed_data = calloc(1, max_dst_size);
   if (compressed_data == NULL)
     run_screaming("Failed to allocate memory for *compressed_data.", 1);
   // That's all the information and preparation LZ4 needs to compress *src into *compressed_data.
@@ -68,7 +68,7 @@ int main(void) {
   /* Decompression */
   // Now that we've successfully compressed the information from *src to *compressed_data, let's do the opposite!  We'll create a
   // *new_src location of size src_size since we know that value.
-  char* const regen_buffer = malloc(src_size);
+  char* const regen_buffer = calloc(1, src_size);
   if (regen_buffer == NULL)
     run_screaming("Failed to allocate memory for *regen_buffer.", 1);
   // The LZ4_decompress_safe function needs to know where the compressed data is, how many bytes long it is,

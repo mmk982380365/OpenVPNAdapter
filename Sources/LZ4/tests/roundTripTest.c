@@ -127,8 +127,8 @@ static void roundTripTest(void* resultBuff, size_t resultBuffCapacity,
 static void roundTripCheck(const void* srcBuff, size_t srcSize, int clevel)
 {
     size_t const cBuffSize = LZ4_compressBound((int)srcSize);
-    void* const cBuff = malloc(cBuffSize);
-    void* const rBuff = malloc(cBuffSize);
+    void* const cBuff = calloc(1, cBuffSize);
+    void* const rBuff = calloc(1, cBuffSize);
 
     if (!cBuff || !rBuff) {
         fprintf(stderr, "not enough memory ! \n");
@@ -202,7 +202,7 @@ static void loadFile(void* buffer, const char* fileName, size_t fileSize)
 static void fileCheck(const char* fileName, int clevel)
 {
     size_t const fileSize = getFileSize(fileName);
-    void* const buffer = malloc(fileSize + !fileSize /* avoid 0 */);
+    void* const buffer = calloc(1, fileSize + !fileSize /* avoid 0 */);
     if (!buffer) {
         MSG("not enough memory \n");
         exit(4);

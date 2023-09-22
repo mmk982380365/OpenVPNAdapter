@@ -351,8 +351,8 @@ int LZ4IO_compressFilename_Legacy(const char* input_filename, const char* output
     if (foutput == NULL) { fclose(finput); EXM_THROW(20, "%s : open file error ", input_filename); }
 
     /* Allocate Memory */
-    in_buff = (char*)malloc(LEGACY_BLOCKSIZE);
-    out_buff = (char*)malloc(outBuffSize);
+    in_buff = (char*)calloc(1, LEGACY_BLOCKSIZE);
+    out_buff = (char*)calloc(1, outBuffSize);
     if (!in_buff || !out_buff) EXM_THROW(21, "Allocation error : not enough memory");
 
     /* Write Archive Header */
@@ -430,7 +430,7 @@ static void* LZ4IO_createDict(const char* dictFilename, size_t *dictSize) {
 
     if (!dictFilename) EXM_THROW(25, "Dictionary error : no filename provided");
 
-    circularBuf = (char *) malloc(circularBufSize);
+    circularBuf = (char *) calloc(1, circularBufSize);
     if (!circularBuf) EXM_THROW(25, "Allocation error : not enough memory");
 
     dictFile = LZ4IO_openSrcFile(dictFilename);
@@ -462,7 +462,7 @@ static void* LZ4IO_createDict(const char* dictFilename, size_t *dictSize) {
         circularBuf = NULL;
     } else {
         /* Otherwise, we will alloc a new buffer and copy our dict into that. */
-        dictBuf = (char *) malloc(dictLen ? dictLen : 1);
+        dictBuf = (char *) calloc(1, dictLen ? dictLen : 1);
         if (!dictBuf) EXM_THROW(25, "Allocation error : not enough memory");
 
         memcpy(dictBuf, circularBuf + dictStart, circularBufSize - dictStart);
@@ -498,10 +498,10 @@ static cRess_t LZ4IO_createCResources(void)
     if (LZ4F_isError(errorCode)) EXM_THROW(30, "Allocation error : can't create LZ4F context : %s", LZ4F_getErrorName(errorCode));
 
     /* Allocate Memory */
-    ress.srcBuffer = malloc(blockSize);
+    ress.srcBuffer = calloc(1, blockSize);
     ress.srcBufferSize = blockSize;
     ress.dstBufferSize = LZ4F_compressFrameBound(blockSize, NULL);   /* cover worst case */
-    ress.dstBuffer = malloc(ress.dstBufferSize);
+    ress.dstBuffer = calloc(1, ress.dstBufferSize);
     if (!ress.srcBuffer || !ress.dstBuffer) EXM_THROW(31, "Allocation error : not enough memory");
 
     ress.cdict = LZ4IO_createCDict();
@@ -679,7 +679,7 @@ int LZ4IO_compressMultipleFilenames(const char** inFileNamesTable, int ifntSize,
 {
     int i;
     int missed_files = 0;
-    char* dstFileName = (char*)malloc(FNSPACE);
+    char* dstFileName = (char*)calloc(1, FNSPACE);
     size_t ofnSize = FNSPACE;
     const size_t suffixSize = strlen(suffix);
     cRess_t ress;
@@ -690,7 +690,7 @@ int LZ4IO_compressMultipleFilenames(const char** inFileNamesTable, int ifntSize,
     /* loop on each file */
     for (i=0; i<ifntSize; i++) {
         size_t const ifnSize = strlen(inFileNamesTable[i]);
-        if (ofnSize <= ifnSize+suffixSize+1) { free(dstFileName); ofnSize = ifnSize + 20; dstFileName = (char*)malloc(ofnSize); if (dstFileName==NULL) { LZ4IO_freeCResources(ress); return ifntSize; } }
+        if (ofnSize <= ifnSize+suffixSize+1) { free(dstFileName); ofnSize = ifnSize + 20; dstFileName = (char*)calloc(1, ofnSize); if (dstFileName==NULL) { LZ4IO_freeCResources(ress); return ifntSize; } }
         strcpy(dstFileName, inFileNamesTable[i]);
         strcat(dstFileName, suffix);
 
@@ -805,8 +805,8 @@ static unsigned long long LZ4IO_decodeLegacyStream(FILE* finput, FILE* foutput)
     unsigned storedSkips = 0;
 
     /* Allocate Memory */
-    char* const in_buff  = (char*)malloc(LZ4_compressBound(LEGACY_BLOCKSIZE));
-    char* const out_buff = (char*)malloc(LEGACY_BLOCKSIZE);
+    char* const in_buff  = (char*)calloc(1, LZ4_compressBound(LEGACY_BLOCKSIZE));
+    char* const out_buff = (char*)calloc(1, LEGACY_BLOCKSIZE);
     if (!in_buff || !out_buff) EXM_THROW(51, "Allocation error : not enough memory");
 
     /* Main Loop */
@@ -881,9 +881,9 @@ static dRess_t LZ4IO_createDResources(void)
 
     /* Allocate Memory */
     ress.srcBufferSize = LZ4IO_dBufferSize;
-    ress.srcBuffer = malloc(ress.srcBufferSize);
+    ress.srcBuffer = calloc(1, ress.srcBufferSize);
     ress.dstBufferSize = LZ4IO_dBufferSize;
-    ress.dstBuffer = malloc(ress.dstBufferSize);
+    ress.dstBuffer = calloc(1, ress.dstBufferSize);
     if (!ress.srcBuffer || !ress.dstBuffer) EXM_THROW(61, "Allocation error : not enough memory");
 
     LZ4IO_loadDDict(&ress);
@@ -1143,7 +1143,7 @@ int LZ4IO_decompressMultipleFilenames(const char** inFileNamesTable, int ifntSiz
     int i;
     int skippedFiles = 0;
     int missingFiles = 0;
-    char* outFileName = (char*)malloc(FNSPACE);
+    char* outFileName = (char*)calloc(1, FNSPACE);
     size_t ofnSize = FNSPACE;
     size_t const suffixSize = strlen(suffix);
     dRess_t ress = LZ4IO_createDResources();
@@ -1158,7 +1158,7 @@ int LZ4IO_decompressMultipleFilenames(const char** inFileNamesTable, int ifntSiz
             missingFiles += LZ4IO_decompressSrcFile(ress, inFileNamesTable[i], stdoutmark);
             continue;
         }
-        if (ofnSize <= ifnSize-suffixSize+1) { free(outFileName); ofnSize = ifnSize + 20; outFileName = (char*)malloc(ofnSize); if (outFileName==NULL) return ifntSize; }
+        if (ofnSize <= ifnSize-suffixSize+1) { free(outFileName); ofnSize = ifnSize + 20; outFileName = (char*)calloc(1, ofnSize); if (outFileName==NULL) return ifntSize; }
         if (ifnSize <= suffixSize  ||  strcmp(suffixPtr, suffix) != 0) {
             DISPLAYLEVEL(1, "File extension doesn't match expected LZ4_EXTENSION (%4s); will not process file: %s\n", suffix, inFileNamesTable[i]);
             skippedFiles++;

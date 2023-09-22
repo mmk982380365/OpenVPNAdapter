@@ -63,7 +63,7 @@ You can contact the author at :
 *  Memory routines
 **************************************/
 #include <stdlib.h>   /* malloc, calloc, free */
-#define ALLOC(s)   malloc(s)
+#define ALLOC(s)   calloc(1, s)
 #define ALLOC_AND_ZERO(s)   calloc(1,s)
 #define FREEMEM        free
 #include <string.h>   /* memset, memcpy, memmove */

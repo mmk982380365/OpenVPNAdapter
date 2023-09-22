@@ -98,7 +98,7 @@
 /*! Modify the local functions below should you wish to use some other memory routines
 *   for malloc(), free() */
 #include <stdlib.h>
-static void* XXH_malloc(size_t s) { return malloc(s); }
+static void* XXH_malloc(size_t s) { return calloc(1, s); }
 static void  XXH_free  (void* p)  { free(p); }
 /*! and for memcpy() */
 #include <string.h>

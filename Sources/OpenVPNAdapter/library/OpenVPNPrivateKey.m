@@ -64,7 +64,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _ctx = malloc(sizeof(mbedtls_pk_context));
+        _ctx = calloc(1, sizeof(mbedtls_pk_context));
         mbedtls_pk_init(_ctx);
     }
     return self;
@@ -80,7 +80,7 @@
 
 - (NSData *)pemData:(NSError * __autoreleasing *)error {
     size_t buffer_length = mbedtls_pk_get_len(self.ctx) * 10;
-    unsigned char *pem_buffer = malloc(buffer_length);
+    unsigned char *pem_buffer = calloc(1, buffer_length);
     
     int result = mbedtls_pk_write_key_pem(self.ctx, pem_buffer, buffer_length);
     if (result < 0) {
@@ -101,7 +101,7 @@
 
 - (NSData *)derData:(NSError * __autoreleasing *)error {
     size_t buffer_length = mbedtls_pk_get_len(self.ctx) * 10;
-    unsigned char *der_buffer = malloc(buffer_length);
+    unsigned char *der_buffer = calloc(1, buffer_length);
     
     int result = mbedtls_pk_write_key_der(self.ctx, der_buffer, buffer_length);
     if (result < 0) {

@@ -174,10 +174,10 @@ static unsigned FUZ_highbit(U32 v32)
 int basicTests(U32 seed, double compressibility)
 {
 #define COMPRESSIBLE_NOISE_LENGTH (2 MB)
-    void* const CNBuffer = malloc(COMPRESSIBLE_NOISE_LENGTH);
+    void* const CNBuffer = calloc(1, COMPRESSIBLE_NOISE_LENGTH);
     size_t const cBuffSize = LZ4F_compressFrameBound(COMPRESSIBLE_NOISE_LENGTH, NULL);
-    void* const compressedBuffer = malloc(cBuffSize);
-    void* const decodedBuffer = malloc(COMPRESSIBLE_NOISE_LENGTH);
+    void* const compressedBuffer = calloc(1, cBuffSize);
+    void* const decodedBuffer = calloc(1, COMPRESSIBLE_NOISE_LENGTH);
     U32 randState = seed;
     size_t cSize, testSize;
     LZ4F_decompressionContext_t dCtx = NULL;
@@ -777,9 +777,9 @@ int fuzzerTests(U32 seed, unsigned nbTests, unsigned startTest, double compressi
     CHECK(LZ4F_isError(result), "Allocation failed (error %i)", (int)result);
     result = LZ4F_createCompressionContext(&cCtx, LZ4F_VERSION);
     CHECK(LZ4F_isError(result), "Allocation failed (error %i)", (int)result);
-    srcBuffer = malloc(srcDataLength);
+    srcBuffer = calloc(1, srcDataLength);
     CHECK(srcBuffer==NULL, "srcBuffer Allocation failed");
-    compressedBuffer = malloc(compressedBufferSize);
+    compressedBuffer = calloc(1, compressedBufferSize);
     CHECK(compressedBuffer==NULL, "compressedBuffer Allocation failed");
     decodedBuffer = calloc(1, srcDataLength);   /* calloc avoids decodedBuffer being considered "garbage" by scan-build */
     CHECK(decodedBuffer==NULL, "decodedBuffer Allocation failed");

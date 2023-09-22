@@ -162,7 +162,7 @@
 *  Memory routines
 **************************************/
 #include <stdlib.h>   /* malloc, calloc, free */
-#define ALLOC(s)          malloc(s)
+#define ALLOC(s)          calloc(1, s)
 #define ALLOC_AND_ZERO(s) calloc(1,s)
 #define FREEMEM(p)        free(p)
 #include <string.h>   /* memset, memcpy */

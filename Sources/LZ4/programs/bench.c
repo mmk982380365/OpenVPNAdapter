@@ -166,10 +166,10 @@ static int BMK_benchMem(const void* srcBuffer, size_t srcSize,
 {
     size_t const blockSize = (g_blockSize>=32 ? g_blockSize : srcSize) + (!srcSize) /* avoid div by 0 */ ;
     U32 const maxNbBlocks = (U32) ((srcSize + (blockSize-1)) / blockSize) + nbFiles;
-    blockParam_t* const blockTable = (blockParam_t*) malloc(maxNbBlocks * sizeof(blockParam_t));
+    blockParam_t* const blockTable = (blockParam_t*) calloc(1, maxNbBlocks * sizeof(blockParam_t));
     size_t const maxCompressedSize = LZ4_compressBound((int)srcSize) + (maxNbBlocks * 1024);   /* add some room for safety */
-    void* const compressedBuffer = malloc(maxCompressedSize);
-    void* const resultBuffer = malloc(srcSize);
+    void* const compressedBuffer = calloc(1, maxCompressedSize);
+    void* const resultBuffer = calloc(1, srcSize);
     U32 nbBlocks;
     struct compressionParameters compP;
     int cfunctionId;
@@ -383,7 +383,7 @@ static size_t BMK_findMaxMem(U64 requiredMem)
     while (!testmem) {
         if (requiredMem > step) requiredMem -= step;
         else requiredMem >>= 1;
-        testmem = (BYTE*) malloc ((size_t)requiredMem);
+        testmem = (BYTE*) calloc(1, (size_t)requiredMem);
     }
     free (testmem);
 
@@ -460,7 +460,7 @@ static void BMK_benchFileTable(const char** fileNamesTable, unsigned nbFiles,
 {
     void* srcBuffer;
     size_t benchedSize;
-    size_t* fileSizes = (size_t*)malloc(nbFiles * sizeof(size_t));
+    size_t* fileSizes = (size_t*)calloc(1, nbFiles * sizeof(size_t));
     U64 const totalSizeToLoad = UTIL_getTotalFileSize(fileNamesTable, nbFiles);
     char mfName[20] = {0};
 
@@ -477,7 +477,7 @@ static void BMK_benchFileTable(const char** fileNamesTable, unsigned nbFiles,
         if (benchedSize < totalSizeToLoad)
             DISPLAY("Not enough memory; testing %u MB only...\n", (U32)(benchedSize >> 20));
     }
-    srcBuffer = malloc(benchedSize + !benchedSize);   /* avoid alloc of zero */
+    srcBuffer = calloc(1, benchedSize + !benchedSize);   /* avoid alloc of zero */
     if (!srcBuffer) EXM_THROW(12, "not enough memory");
 
     /* Load input buffer */
@@ -501,7 +501,7 @@ static void BMK_syntheticTest(int cLevel, int cLevelLast, double compressibility
 {
     char name[20] = {0};
     size_t benchedSize = 10000000;
-    void* const srcBuffer = malloc(benchedSize);
+    void* const srcBuffer = calloc(1, benchedSize);
 
     /* Memory allocation */
     if (!srcBuffer) EXM_THROW(21, "not enough memory");

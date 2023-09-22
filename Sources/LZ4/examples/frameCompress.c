@@ -127,9 +127,9 @@ compress_file(FILE* f_in, FILE* f_out)
     /* ressource allocation */
     LZ4F_compressionContext_t ctx;
     size_t const ctxCreation = LZ4F_createCompressionContext(&ctx, LZ4F_VERSION);
-    void* const src = malloc(IN_CHUNK_SIZE);
+    void* const src = calloc(1, IN_CHUNK_SIZE);
     size_t const outbufCapacity = LZ4F_compressBound(IN_CHUNK_SIZE, &kPrefs);   /* large enough for any input <= IN_CHUNK_SIZE */
-    void* const outbuff = malloc(outbufCapacity);
+    void* const outbuff = calloc(1, outbufCapacity);
 
     compressResult_t result = { 1, 0, 0 };  /* == error (default) */
     if (!LZ4F_isError(ctxCreation) && src && outbuff) {
@@ -266,7 +266,7 @@ decompress_file_allocDst(FILE* f_in, FILE* f_out,
      * correctness, but it allows some memcpy's to be elided.
      */
     size_t const dstCapacity = get_block_size(&info);
-    void* const dst = malloc(dstCapacity);
+    void* const dst = calloc(1, dstCapacity);
     if (!dst) { perror("decompress_file(dst)"); return 1; }
 
     int const decompressionResult = decompress_file_internal(
@@ -286,7 +286,7 @@ static int decompress_file(FILE* f_in, FILE* f_out)
     assert(f_in != NULL); assert(f_out != NULL);
 
     /* Ressource allocation */
-    void* const src = malloc(IN_CHUNK_SIZE);
+    void* const src = calloc(1, IN_CHUNK_SIZE);
     if (!src) { perror("decompress_file(src)"); return 1; }
 
     LZ4F_dctx* dctx;

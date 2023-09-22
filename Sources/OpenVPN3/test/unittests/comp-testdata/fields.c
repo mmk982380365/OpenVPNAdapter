@@ -59,7 +59,7 @@ unsigned int	field_line_inc = 512; /* Incr to increase line length by */
 #endif /* USG */
 
 extern void	free ();
-extern char *	malloc ();
+extern char *	calloc ();
 extern char *	realloc ();
 extern char *	strchr ();
 extern int	strlen ();
@@ -79,7 +79,7 @@ field_t * fieldread (file, delims, flags, maxf)
     int			linemax; /* Maximum line buffer size */
     int			linesize; /* Current line buffer size */
 
-    linebuf = (char *) malloc (field_line_inc);
+    linebuf = (char *) calloc(1, field_line_inc);
     if (linebuf == NULL)
 	return NULL;
     linemax = field_line_inc;
@@ -119,7 +119,7 @@ field_t * fieldmake (line, allocated, delims, flags, maxf)
     register field_t *	fieldp;	/* Structure describing the fields */
     int			linesize; /* Current line buffer size */
 
-    fieldp = (field_t *) malloc (sizeof (field_t));
+    fieldp = (field_t *) calloc(1, sizeof (field_t));
     if (fieldp == NULL)
 	return NULL;
     fieldp->nfields = 0;
@@ -162,7 +162,7 @@ static field_t * fieldparse (fieldp, line, delims, flags, maxf)
     fieldp->nfields = 0;
     fieldmax =
       (maxf != 0  &&  maxf < field_field_inc) ? maxf + 2 : field_field_inc;
-    fieldp->fields = (char **) malloc (fieldmax * sizeof (char *));
+    fieldp->fields = (char **) calloc(1, fieldmax * sizeof (char *));
     if (fieldp->fields == NULL)
 	{
 	fieldfree (fieldp);
